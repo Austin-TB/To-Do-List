@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script src="https://kit.fontawesome.com/ab9cb77c6e.js" crossorigin="anonymous"></script>
+    <meta charset="UTF-8">
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@200..800&family=Questrial&family=Quicksand:wght@300..700&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="heading-and-search">
+        <h1>To-Do List</h1>
+        <div>
+            <button class="search-button"><i class="fa-solid fa-magnifying-glass"></i></button>
+        </div>
+    </div>
+    <div class="add-task">
+        <input type="text" placeholder="Add a new task..." id="task-input">
+        <div class="deadline">
+            <button id="calendar">Today</button>
+            <div class="calendar-container">
+                <input type="date" id="date-input">
+            </div>
+            <button id="time-select">Set time</button>
+            <div class="time-container">
+                <input type="time" id="time-input">
+            </div>
+        </div>
+    </div>
+        <div class="empty-list">
+            <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*-8mt4rfmrc5bAgL9CEdW-w.png">
+            <h2>Your list is empty</h2>
+        </div>
+        <div class="task-list-container">
+            
+        </div>
+
+        <script src="scripts.js"></script>
+
+</body>
+
+</html>
