@@ -25,23 +25,22 @@
         <div class="deadline">
             <button id="calendar">Today</button>
             <div class="calendar-container">
-                <input type="date" id="date-input">
+                <input type="date" id="date-input" class="hidden">
             </div>
             <button id="time-select">Set time</button>
             <div class="time-container">
-                <input type="time" id="time-input">
+                <input type="time" id="time-input" class="hidden" value="23:59">
             </div>
         </div>
     </div>
-        <div class="empty-list">
-            <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*-8mt4rfmrc5bAgL9CEdW-w.png">
-            <h2>Your list is empty</h2>
-        </div>
-        <div class="task-list-container">
-            
-        </div>
 
-        <script src="scripts.js"></script>
+    <div class="empty-list">
+        <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*-8mt4rfmrc5bAgL9CEdW-w.png">
+        <h2>Your list is empty</h2>
+    </div>
+
+    <div class="task-list-container"></div>
+    <script src="scripts.js"></script>
 
 </body>
 
