@@ -46,6 +46,10 @@ function addEventListenersToTasks() {
         button.addEventListener('click', function () {
             deleteTask(button);
         });
+    const toggleButtons = document.querySelectorAll('.toggle-button');
+    toggleButtons.forEach(button => {
+        button.addEventListener('click', toggleTaskList);
+    
     });
 
     const dateInputFields = document.querySelectorAll('.date-task-input');
@@ -58,9 +62,17 @@ function addEventListenersToTasks() {
     });
 
     const dateTimeButtons = document.querySelectorAll('.date-time-button');
-    dateTimeButtons.forEach(button => {
-        button.addEventListener('click', toggleDateTimeInput);
+    dateTimeButtons.forEach(button => button.addEventListener('click', toggleDateTimeInput));
     });
+}
+
+function toggleTaskList(event) {
+    const taskList = event.target.closest('.task-list');
+    const collapsibleContent = taskList.querySelector('.collapsible-content');
+    const toggleButton = event.target;
+
+    collapsibleContent.classList.toggle('collapsed');
+    toggleButton.textContent = collapsibleContent.classList.contains('collapsed') ? '▶' : '▼';
 }
 
 function loadTasks() {
@@ -115,7 +127,7 @@ function createTaskHtml(task, time) {
             <label for="checkbox">${task}</label>
             <p>${time}</p>
             <div>
-                <button class="options-button">...</button>
+                <button class="options-button">⋮</button>
                 <div class="options-menu hidden">
                     <button class="edit-task">Edit</button>
                     <button class="delete-task">Delete</button>
@@ -128,14 +140,19 @@ function createTaskHtml(task, time) {
 function createDateListHtml(date, taskHtml) {
     return `
         <div class="task-list" data-date="${date}">
-            <h2>${date}</h2>
-            <div class="tasks-container">
-                ${taskHtml}
+            <div class="date-header">
+                <button class="toggle-button">▼</button>
+                <h2>${date}</h2>
             </div>
-            <div class="date-task-input-container">
-                <input type="text" class="date-task-input" placeholder="Add a task for this date">
-                <button class="date-time-button">Set Time</button>
-                <input type="time" class="date-time-input hidden" value="23:59">
+            <div class="collapsible-content">
+                <div class="tasks-container">
+                    ${taskHtml}
+                </div>
+                <div class="date-task-input-container">
+                    <input type="text" class="date-task-input" placeholder="Add a task for this date">
+                    <button class="date-time-button">Set Time</button>
+                    <input type="time" class="date-time-input hidden" value="23:59">
+                </div>
             </div>
         </div>
     `;
