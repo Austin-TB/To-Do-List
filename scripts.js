@@ -1,4 +1,5 @@
 const taskListContainer = document.querySelector('.task-list-container');
+const searchInput = document.querySelector('#search-input');
 const taskInput = document.querySelector('#task-input');
 const dateInput = document.querySelector('#date-input');
 const calendarButton = document.querySelector('#calendar');
@@ -12,8 +13,9 @@ function todaysDate() {
     const year = today.getFullYear();
     const month = today.getMonth() + 1;
     const day = today.getDate();
+
     return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
-};
+}
 
 dateInput.value = todaysDate();
 
@@ -24,6 +26,52 @@ function isListEmpty() {
         emptyListMessage.style.display = 'none';
     }
 }
+
+function searchTasks() {
+    const searchTerm = searchInput.value.toLowerCase();
+    const taskLists = document.querySelectorAll('.task-list');
+
+    taskLists.forEach(taskList => {
+        const tasks = taskList.querySelectorAll('.task');
+        let hasMatch = false;
+
+        tasks.forEach(task => {
+            const taskContent = task.querySelector('label').textContent.toLowerCase();
+            const match = taskContent.includes(searchTerm);
+
+            if (match) {
+                hasMatch = true;
+                highlightTask(task, searchTerm);
+            } else {
+                removeHighlight(task);
+            }
+
+            task.style.display = match || searchTerm === '' ? 'flex' : 'none';
+        });
+
+        const collapsibleContent = taskList.querySelector('.collapsible-content');
+        const toggleButton = taskList.querySelector('.toggle-button');
+        if (hasMatch && searchTerm !== '') {
+            collapsibleContent.classList.remove('collapsed');
+            toggleButton.textContent = '▼';
+        }
+
+        taskList.style.display = hasMatch || searchTerm === '' ? 'block' : 'none';
+    });
+}
+
+function highlightTask(task, searchTerm) {
+    const label = task.querySelector('label');
+    const regex = new RegExp(`(${searchTerm})`, 'gi');
+    label.innerHTML = label.textContent.replace(regex, '<span class="highlight">$1</span>');
+}
+
+function removeHighlight(task) {
+    const label = task.querySelector('label');
+    label.innerHTML = label.textContent;
+}
+
+searchInput.addEventListener('input', searchTasks);
 
 function saveTasks() {
     localStorage.setItem('tasks', taskListContainer.innerHTML);
@@ -46,10 +94,16 @@ function addEventListenersToTasks() {
         button.addEventListener('click', function () {
             deleteTask(button);
         });
+    });
+
     const toggleButtons = document.querySelectorAll('.toggle-button');
     toggleButtons.forEach(button => {
         button.addEventListener('click', toggleTaskList);
-    
+    });
+
+    const checkboxes = document.querySelectorAll('.task input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', toggleTaskCompletion);
     });
 
     const dateInputFields = document.querySelectorAll('.date-task-input');
@@ -63,7 +117,8 @@ function addEventListenersToTasks() {
 
     const dateTimeButtons = document.querySelectorAll('.date-time-button');
     dateTimeButtons.forEach(button => button.addEventListener('click', toggleDateTimeInput));
-    });
+
+    searchInput.value = '';
 }
 
 function toggleTaskList(event) {
@@ -87,6 +142,7 @@ function loadTasks() {
     }
 
     isListEmpty();
+    searchInput.value = '';
 }
 
 loadTasks();
@@ -105,6 +161,7 @@ function addTask() {
     addEventListenersToTasks();
     isListEmpty();
     saveTasks();
+    searchInput.value = '';
 }
 
 function addTaskToList(task, date, time) {
@@ -137,18 +194,55 @@ function createTaskHtml(task, time) {
     `;
 }
 
+function toggleTaskCompletion(event) {
+    const checkbox = event.target;
+    const taskElement = checkbox.closest('.task');
+    const label = taskElement.querySelector('label');
+
+    if (checkbox.checked) {
+        label.style.textDecoration = 'line-through';
+        label.style.opacity = '0.5';
+    } else {
+        label.style.textDecoration = 'none';
+        label.style.opacity = '1';
+    }
+
+    saveTasks();
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const today = new Date();
+    
+    if (date.toDateString() === today.toDateString()) {
+        return "Today";
+    }
+
+    const day = date.getDate();
+    const month = date.toLocaleString('default', { month: 'long' });
+    const year = date.getFullYear();
+
+    const suffix = ["th", "st", "nd", "rd"];
+    const v = day % 100;
+    const daySuffix = (suffix[(v - 20) % 10] || suffix[v] || suffix[0]);
+
+    return `${day}${daySuffix} ${month}, ${year}`;
+}
+
 function createDateListHtml(date, taskHtml) {
+    const formattedDate = formatDate(date);
     return `
         <div class="task-list" data-date="${date}">
             <div class="date-header">
                 <button class="toggle-button">▼</button>
-                <h2>${date}</h2>
+                <h2>${formattedDate}</h2>
             </div>
             <div class="collapsible-content">
                 <div class="tasks-container">
                     ${taskHtml}
                 </div>
                 <div class="date-task-input-container">
+                    <i class="fa-solid fa-plus plus-icon"></i>
                     <input type="text" class="date-task-input" placeholder="Add a task for this date">
                     <button class="date-time-button">Set Time</button>
                     <input type="time" class="date-time-input hidden" value="23:59">
@@ -208,6 +302,7 @@ function deleteTask(deleteButton) {
 
     isListEmpty();
     saveTasks();
+    searchInput.value = '';
 }
 
 function toggleDateTimeInput(event) {
